@@ -90,7 +90,7 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 
 ### CI/CD
 #### Jenkins - CI
-<img width="800" alt="Image" src="https://github.com/user-attachments/assets/b77ddd10-ead5-424c-81e9-d3ed6ecf12cb" />
+<img width="650" alt="Image" src="https://github.com/user-attachments/assets/9927125a-55b5-4a1f-bab2-aba80662818a" />
 
 <details>
   <summary>Github webhook 연동</summary>
@@ -110,7 +110,7 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 <br>
 
 #### ArgoCD - CD
-<img width="600" alt="Image" src="https://github.com/user-attachments/assets/8160dac8-0529-4e51-96eb-f684d0fa81bf" />
+<img width="600" alt="Image" src="https://github.com/user-attachments/assets/68c1f23b-f292-4d2e-a3b7-1146b68052a9" />
 
 <details>
   <summary>Image digest 업데이트 방식</summary>
