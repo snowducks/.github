@@ -2,7 +2,7 @@
 
 <div align=center>
   
-<img src="https://github.com/user-attachments/assets/ae50e708-ec0a-44d0-81af-f8fc3f4daa9d" width="500">
+<img src="https://github.com/user-attachments/assets/ba1b7b45-0d63-4e80-99cb-8832f237e70b" width="500">
 
 <br>프로젝트 최종 결과 최우수상(1위)
 
@@ -45,20 +45,36 @@
 
 ### 1.배포계
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/3b6234cb-bca2-4187-afc5-0f4557b3b324" />
-배포계는 실제 운영 환경으로, EKS(Elastic Kubernetes Service) 기반으로 구축되었습니다. <br>
-클라이언트 요청은 Route 53 → CloudFront → ALB → Kubernetes Ingress → ClusterIP Service → Pod 순으로 처리됩니다.
-ElastiCache는 대기 순번 조회 및 티켓 잔여석 조회 용도로 활용하였으며, AuroraDB Global을 도입하여 멀티 리전 간 데이터 동기화를 구현하였습니다. <br>
+
+**실제 운영 환경**
+
+- EKS(Elastic Kubernetes Service) 기반으로 구축 <br>
+- 클라이언트 요청은 Route 53 → CloudFront → ALB → Kubernetes Ingress → ClusterIP Service → Pod 순으로 처리 <br>
+- ElastiCache는 대기 순번 조회 및 티켓 잔여석 조회 용도 활용, AuroraDB Global을 도입하여 멀티 리전 간 데이터 동기화 구현 <br>
 
 ### 2. 개발계
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/6178e0c4-9277-4b65-b466-8490f7e2a1b5" />
-개발계는 개발과 QA를 위한 환경을 구축하였습니다. <br>
+
+**개발 및 QA 환경** <br>
+
+- 보안 강화를 위해 Jenkins가 존재하는 EC2에 접근하기 위해서는 Bastion Server를 통해서만 접근 가능
 
 ### 3. DR
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/6ca91fad-d116-4110-98ba-350ae077b5f6" />
-DR은 Route53의 가중치 기반 라우팅을 활용하여 AWS 서울 리전의 서비스가 실패하면 싱가포르 리전의 서비스로 연결되도록 구성하였습니다. DR EKS 환경을 구축하기까지 시간이 소요되므로 ECS를 환경을 운영 환경 함께 Active-Active 하게 운영하고자 하였습니다. <br>
-- 평상 시 가중치 : 운영(100), ECS DR(0) <br>
-- 재난 발생 시 가중치(EKS 환경 구축 중) : 운영(0), DR EKS(50), DR ECS(50) <br>
-- DR EKS 환경 구축 완료 시 가중치(DR EKS 환경의 헬스체크 성공 기준) : 운영(50), DR EKS(50), DR ECS(50) <br>
+
+**재해 복구 모델 환경** <br>
+
+재난 발생 시 복구 시간 최소화를 위해 2가지 환경 설계 <br>
+1. EKS 기반 DR 환경 : Standby 상태 <br>
+2. ECS 기반 DR 환경 : Active 상태 <br>
+
+- DR 모델은 Route53의 가중치 기반 라우팅을 활용하여 AWS 서울 리전의 서비스가 실패하면 싱가포르 리전의 서비스로 연결되도록 구성 <br>
+- DR EKS 환경을 구축하기까지 시간이 20~30분 소요, DR ECS를 환경을 운영 환경 함께 Active-Active 하게 운영하여 DR EKS 환경이 구축될 때까지 이용 <br><br>
+
+라우팅 가중치 <br>
+- 평상 시 : 운영(100), DR EKS(0), DR ECS(0) <br>
+- 재난 발생 시 (EKS 환경 구축 중) : 운영(0), DR EKS(50), DR ECS(50) <br>
+- DR EKS 환경 구축 완료 시 (DR EKS 환경의 Health Check 성공 시) : 운영(50), DR EKS(50), DR ECS(50) <br>
 
 <br>
 
@@ -74,6 +90,17 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 
 <details>
 <summary>인프라 구축을 위한 테라폼 도입</summary>
+
+  - Terraform : 클라우드 및 온프레미스 환경의 인프라를 코드로 정의하고 관리할 수 있도록 지원하는 오픈 소스 소프트웨어
+  - 장점
+    1. 인프라를 코드로 정의 → 자동화
+    2. 모듈화 기능을 활용하여 반복적으로 사용되는 구성 재사용 → 유지보수성 향상
+    3. 장애 발생 시 이용 → 신속한 복구
+
+  - 적용 범위
+    1. 개발 환경
+    2. DR 환경 EKS 클러스터 구성
+    
 </details>
 
 
@@ -101,6 +128,10 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 
 <details>
   <summary>Sonarqube 연동</summary>
+  
+  - Sonarqube : 소스 코드 품질 및 보안 분석을 자동으로 수행하는 정적 코드 분석 도구
+  - 코드 버그와 보안 취약점 탐지, 지속적으로 코드 품질 개선 목적
+    
 </details>
 
 <details>
