@@ -36,5 +36,137 @@
 
 
 ## 개발 환경
+<img width="1155" alt="Image" src="https://github.com/user-attachments/assets/bddf699b-3133-4091-b258-b25093efdf90" />
+
+<br><br>
+
+## 전체 아키텍처
+<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/5258c1b3-2328-477f-9fe8-60f1dc1655bd" />
+
+### 1. 운영계
+<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/3b6234cb-bca2-4187-afc5-0f4557b3b324" />
+
+### 2. 개발계
+<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/6178e0c4-9277-4b65-b466-8490f7e2a1b5" />
+
+### 3. DR
+<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/6ca91fad-d116-4110-98ba-350ae077b5f6" />
+
+
+<br>
+
+## 주요 기능
+
+https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
+
+<br>
+
+## 인프라 구축 & CI/CD
+
+### Terraform
+
+<details>
+<summary>인프라 구축을 위한 테라폼 도입</summary>
+</details>
+
+
+<details>
+<summary>Terraform Infracost를 이용한 비용 예측</summary>
+</details>
+
+
+<details>
+<summary>Tfsec</summary>
+</details>
+
+<br>
+
+### CI/CD
+#### Jenkins - CI
+<img width="800" alt="Image" src="https://github.com/user-attachments/assets/b77ddd10-ead5-424c-81e9-d3ed6ecf12cb" />
+
+<details>
+  <summary>Github webhook 연동</summary>
+  <ul>
+    <li>보안을 위해서 API Gateway 사용</li>
+  </ul>
+</details>
+
+<details>
+  <summary>Sonarqube 연동</summary>
+</details>
+
+<details>
+  <summary>ECR registry 활용</summary>
+</details>
+
+<br>
+
+#### ArgoCD - CD
+<img width="600" alt="Image" src="https://github.com/user-attachments/assets/8160dac8-0529-4e51-96eb-f684d0fa81bf" />
+
+<details>
+  <summary>Image digest 업데이트 방식</summary>
+</details>
+
+<details>
+  <summary>Canary 무중단 배포 전략</summary>
+</details>
+
+<details>
+  <summary>helm chart를 활용한 배포</summary>
+</details>
+
+<br><br>
+
+## 모니터링 & 부하 테스트
+모니터링 도구 **Datadog**을 이용하여 Kubernetes 기반 컨테이너 환경의 상태 및 리소스 사용량을 추적하고, Pod, Node, Cluster의 상태를 모니터링 했습니다.
+<details>
+  <summary>Datadog 통합 대시보드</summary>
+  
+  <img width="800" alt="Image" src="https://github.com/user-attachments/assets/71d4e019-9c21-491a-931b-1c85e83eb00f" />
+  
+</details>
+
+
+### 모니터링 도구를 활용한 DR 구축
+
+<details>
+  <summary>재난 상황 발생 시 슬랙을 통한 알림과 DR 구축 시나리오</summary>
+  
+  ![dr 시나리오](https://github.com/user-attachments/assets/b18062bf-f79f-4222-a939-f7918e508917)
+    
+  1. Route 53의 Health Check 실패
+  2. Datadog이 Slack으로 알림 발송
+    
+  <img width="400" alt="Image" src="https://github.com/user-attachments/assets/5c985023-1069-4ac4-9996-999bca50744e" />
+      
+  3. Webhook -> API Gateway -> Lambda -> Jenkins -> Terraform
+    
+</details>
+
+<br>
+
+### Jmeter를 활용한 부하 테스트
+대규모 트래픽(5만) 처리를 위한 고려 사항
+<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/e48566eb-8cc1-47f0-8e8a-7364803f4e11" />
+
+- 500rps를 처리하기 위한 CPU 및 메모리 스펙을 통한 50000rps를 위한 스펙 예측
+- K8s pod 및 node 오토 스케일링
+
+
+<details>
+  <summary>8000rps 테스트 결과</summary>
+  
+  https://github.com/user-attachments/assets/1dca5c49-374c-4c0d-9d80-6f4b8361d13c
+  
+  - kafka 관련 파드: 5개 → 15 ~ 20개
+  - c6.xlarge 노드: 3개 → 4개
+    
+  <img width="500" alt="Image" src="https://github.com/user-attachments/assets/c0f381c0-0ad1-47e6-8b5b-93cf7f255637" />
+  <img width="500" alt="Image" src="https://github.com/user-attachments/assets/6137f4ab-c551-4c89-bff3-c848a7523539" />
+
+</details>
+
 
 
