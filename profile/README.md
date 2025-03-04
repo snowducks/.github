@@ -43,15 +43,22 @@
 ## 전체 아키텍처
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/5258c1b3-2328-477f-9fe8-60f1dc1655bd" />
 
-### 1. 운영계
+### 1.배포계
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/3b6234cb-bca2-4187-afc5-0f4557b3b324" />
+배포계는 실제 운영 환경으로, EKS(Elastic Kubernetes Service) 기반으로 구축되었습니다. <br>
+클라이언트 요청은 Route 53 → CloudFront → ALB → Kubernetes Ingress → ClusterIP Service → Pod 순으로 처리됩니다.
+ElastiCache는 대기 순번 조회 및 티켓 잔여석 조회 용도로 활용하였으며, AuroraDB Global을 도입하여 멀티 리전 간 데이터 동기화를 구현하였습니다. <br>
 
 ### 2. 개발계
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/6178e0c4-9277-4b65-b466-8490f7e2a1b5" />
+개발계는 개발과 QA를 위한 환경을 구축하였습니다. <br>
 
 ### 3. DR
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/6ca91fad-d116-4110-98ba-350ae077b5f6" />
-
+DR은 Route53의 가중치 기반 라우팅을 활용하여 AWS 서울 리전의 서비스가 실패하면 싱가포르 리전의 서비스로 연결되도록 구성하였습니다. DR EKS 환경을 구축하기까지 시간이 소요되므로 ECS를 환경을 운영 환경 함께 Active-Active 하게 운영하고자 하였습니다. <br>
+- 평상 시 가중치 : 운영(100), ECS DR(0) <br>
+- 재난 발생 시 가중치(EKS 환경 구축 중) : 운영(0), DR EKS(50), DR ECS(50) <br>
+- DR EKS 환경 구축 완료 시 가중치(DR EKS 환경의 헬스체크 성공 기준) : 운영(50), DR EKS(50), DR ECS(50) <br>
 
 <br>
 
