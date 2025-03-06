@@ -117,7 +117,8 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 
 ### CI/CD
 #### Jenkins - CI
-<img width="650" alt="Image" src="https://github.com/user-attachments/assets/9927125a-55b5-4a1f-bab2-aba80662818a" />
+<img width="650" alt="수정 CI" src="https://github.com/user-attachments/assets/65e7d27d-0715-4351-a812-dcd7f90030c9" />
+
 
 <details>
   <summary>Github webhook 연동</summary>
@@ -141,7 +142,8 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 <br>
 
 #### ArgoCD - CD
-<img width="600" alt="Image" src="https://github.com/user-attachments/assets/68c1f23b-f292-4d2e-a3b7-1146b68052a9" />
+<img width="600" alt="수정 CD" src="https://github.com/user-attachments/assets/1427c206-c6f7-4ffc-a384-5e33ba23d4bc" />
+
 
 <details>
   <summary>Image digest 업데이트 방식</summary>
@@ -201,8 +203,8 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
   - kafka 관련 파드: 5개 → 15 ~ 20개
   - c6.xlarge 노드: 3개 → 4개
     
-  <img width="500" alt="Image" src="https://github.com/user-attachments/assets/c0f381c0-0ad1-47e6-8b5b-93cf7f255637" />
-  <img width="500" alt="Image" src="https://github.com/user-attachments/assets/6137f4ab-c551-4c89-bff3-c848a7523539" />
+  <img width="400" alt="Image" src="https://github.com/user-attachments/assets/c0f381c0-0ad1-47e6-8b5b-93cf7f255637" />
+  <img width="400" alt="Image" src="https://github.com/user-attachments/assets/6137f4ab-c551-4c89-bff3-c848a7523539" />
 
 </details>
 
