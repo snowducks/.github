@@ -1,4 +1,4 @@
-# CloudWave 4기 2조 올리브영 AWS 인프라 구축 프로젝트
+# CloudWave 4기 올리브영 AWS 인프라 구축 프로젝트 2조
 
 <div align=center>
   
@@ -19,7 +19,7 @@
 - **프로젝트 목표**    
 
     - **대기열을 활용한 티켓팅 시스템 구축** – 실시간 트래픽 관리 및 공정한 예매 환경 제공  
-    - **대규모 트래픽(5만 명 이상) 처리** – 동시 접속자 증가에도 안정적인 서비스 유지  
+    - **대규모 트래픽 처리** – 최대 50,000 RPS 안정적인 서비스 유지  
     - **재난 상황에서도 지속적인 서비스 운영** – 장애 감지 및 복구 시스템 적용으로 고가용성 확보  
 
 
@@ -57,7 +57,9 @@
 
 **개발 및 QA 환경** <br>
 
-- 보안 강화를 위해 Jenkins가 존재하는 EC2에 접근하기 위해서는 Bastion Server를 통해서만 접근 가능
+- **보안:** Jenkins는 **Bastion 서버**를 통해서만 접근 가능
+- **CI/CD 흐름:**
+    **API Gateway + Lambda** → **Jenkins Webhook** 호출 -> **Jenkins**가 **ECR**에 컨테이너 이미지 푸시 -> **ArgoCD**가 Digest 기반으로 이미지 변경 감지 후 **EKS 배포**
 
 ### 3. DR
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/6ca91fad-d116-4110-98ba-350ae077b5f6" />
@@ -71,10 +73,13 @@
 - DR 모델은 Route53의 가중치 기반 라우팅을 활용하여 AWS 서울 리전의 서비스가 실패하면 싱가포르 리전의 서비스로 연결되도록 구성 <br>
 - DR EKS 환경을 구축하기까지 시간이 20~30분 소요, DR ECS를 환경을 운영 환경 함께 Active-Active 하게 운영하여 DR EKS 환경이 구축될 때까지 이용 <br><br>
 
-라우팅 가중치 <br>
-- 평상 시 : 운영(100), DR EKS(0), DR ECS(0) <br>
-- 재난 발생 시 (EKS 환경 구축 중) : 운영(0), DR EKS(50), DR ECS(50) <br>
-- DR EKS 환경 구축 완료 시 (DR EKS 환경의 Health Check 성공 시) : 운영(50), DR EKS(50), DR ECS(50) <br>
+라우팅 가중치 설정
+| 상태                          | 운영 (Production) | DR EKS | DR ECS |
+|------------------------------|------------------|--------|--------|
+| **평상 시**                   | 100              | 0      | 0      |
+| **재난 발생 시 (EKS 구축 중)**  | 0                | 50     | 50     |
+| **DR EKS 구축 완료 (Health Check 성공 시)** | 0               | 100     | 0     |
+
 
 <br>
 
@@ -106,11 +111,30 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 
 <details>
 <summary>Terraform Infracost를 이용한 비용 예측</summary>
+
+![image 75](https://github.com/user-attachments/assets/1fdfadbb-e233-4cf3-9876-d98c7e1f20ac)
+비용 예측 및 실제 비용 비교
+
+- Terraform Infracost 예측: 한 달 약 $1,388 (약 200만 원)
+- 실제 부하 테스트 결과: 하루 $132, 10일 기준 한 달 $2,257 예상
+  
+비용 절감 전략
+
+- MSK 대신 자체 Kafka 클러스터 운영 → MSK 사용 비용 절감
+- ECS 대신 EKS 활용 → Kafka 같은 데이터 집약적 서비스의 높은 스토리지 비용 절감
+
 </details>
+
 
 
 <details>
 <summary>Tfsec</summary>
+<img width="400" alt="prod problem 43 1" src="https://github.com/user-attachments/assets/0d47269d-8822-4795-8cc5-b977df7f7c3b" />
+<img width="400" alt="prod problem 10개 1" src="https://github.com/user-attachments/assets/419daf48-3ea4-4d61-9a5b-6adcd1aa1210" />
+
+- Tfsec : Terraform 코드 보안 검사 도구로, IaC 보안 취약점을 분석하여 클라우드 환경에서의 보안 위험을 사전에 감지하는 역할
+- 보안 점검 통과율을 초기 58.67%에서 90.10%로 개선하여 +49.18% 향상
+
 </details>
 
 <br>
@@ -181,7 +205,7 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
     
   <img width="400" alt="Image" src="https://github.com/user-attachments/assets/5c985023-1069-4ac4-9996-999bca50744e" />
       
-  3. Webhook -> API Gateway -> Lambda -> Jenkins -> Terraform
+  3. Webhook 트리거 발생 -> API Gateway가 Lambda 호출 -> Lambda가 Jenkins 실행 -> Jenkins가 Terraform 실행하여 인프라 프로비저닝
     
 </details>
 
