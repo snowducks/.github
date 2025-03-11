@@ -89,6 +89,24 @@
 
 https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 
+### 데이터 흐름
+
+- **예매 버튼 클릭**
+    - Kafka Producer에게 선택한 예매 시간 데이터를 전달
+- **Kafka Producer 응답**
+    - UUID 쿠키 발급 후 로딩창으로 이동
+- **Kafka Consumer 처리**
+    - Kafka Consumer가 메시지 수신 후, 대기열 데이터를 ElastiCache 에 저장
+- **로딩창 동작** (WebSocket 활용)
+    - ElastiCache 에 저장된 대기열 정보(예매창 접속 여부, 현재 대기 인원)를 WebSocket을 통해 지속 확인
+    - 접속 여부가 true가 되면 즉시 예매창으로 이동
+- **예매창 동작** (WebSocket 활용)
+    - 각 예매 시간별 남은 인원수를 WebSocket으로 실시간 확인
+    - 특정 시간의 남은 인원이 0이면 해당 시간 선택 버튼 비활성화
+- **예매 완료 프로세스**
+    - 예매 시간 선택 후 "예매 완료" 클릭 시 Kafka Producer에게 선택한 시간 정보를 전달
+    - Kafka Consumer 가 메시지 수신후, 예매 완료 데이터 ElastiCache 에 저장
+
 <br>
 
 
