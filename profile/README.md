@@ -36,7 +36,9 @@
 
 
 ## 개발 환경
-<img width="1155" alt="Image" src="https://github.com/user-attachments/assets/bddf699b-3133-4091-b258-b25093efdf90" />
+<img width="950" alt="infra" src="https://github.com/user-attachments/assets/c67825a5-6eef-4b46-9a01-6b52dd34a963" />
+<img width="1000" alt="tool" src="https://github.com/user-attachments/assets/23fb8aa1-7551-4dfd-a18a-3cb64f3c26b6" />
+
 
 <br><br>
 
@@ -57,9 +59,9 @@
 
 **개발 및 QA 환경** <br>
 
-- **보안:** Jenkins는 **Bastion 서버**를 통해서만 접근 가능
-- **CI/CD 흐름:**
-    **API Gateway + Lambda** → **Jenkins Webhook** 호출 -> **Jenkins**가 **ECR**에 컨테이너 이미지 푸시 -> **ArgoCD**가 Digest 기반으로 이미지 변경 감지 후 **EKS 배포**
+- 보안: Jenkins는 Bastion 서버를 통해서만 접근 가능
+- CI/CD 흐름:
+    API Gateway + Lambda → Jenkins Webhook 호출 → Jenkins가 ECR에 컨테이너 이미지 푸시 → ArgoCD가 Digest 기반으로 이미지 변경 감지 후 EKS 배포
 
 ### 3. DR
 <img width="1000" alt="dr 최종수정" src="https://github.com/user-attachments/assets/f2595625-35f2-4cab-ae47-70b16b5dfed6" />
@@ -78,9 +80,9 @@
 라우팅 가중치 설정
 | 상태                          | 운영 (Production) | DR EKS | DR ECS |
 |------------------------------|------------------|--------|--------|
-| **평상 시**                   | 100              | 0      | 0      |
-| **재난 발생 시 (EKS 구축 중)**  | 0                | 50     | 50     |
-| **DR EKS 구축 완료 (Health Check 성공 시)** | 0               | 100     | 0     |
+| 평상시                 | 100              | 0      | 0      |
+| 재난 발생 (DR EKS 구축 중)  | 0                | 50     | 50     |
+| DR EKS 구축 완료 (Health Check 성공 시) | 0               | 100     | 0     |
 
 
 <br>
@@ -117,7 +119,9 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 - 500rps를 처리하기 위한 CPU 및 메모리 스펙을 통한 50000rps를 위한 스펙 예측
 - K8s pod 및 node 오토 스케일
 
-## 5만이상의 트래픽을 위한 고려사항
+<br>
+
+## 트래픽 처리를 위한 Kafka 도입
 
 <img width="1000" alt="Image" src="https://github.com/user-attachments/assets/a4fc9135-e99f-48b8-91cb-37541746624a" />
 
@@ -171,8 +175,9 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 
 <details>
 <summary>Tfsec</summary>
-<img width="400" alt="prod problem 43 1" src="https://github.com/user-attachments/assets/0d47269d-8822-4795-8cc5-b977df7f7c3b" />
-<img width="400" alt="prod problem 10개 1" src="https://github.com/user-attachments/assets/419daf48-3ea4-4d61-9a5b-6adcd1aa1210" />
+<img width="360" alt="prod problem 43 1" src="https://github.com/user-attachments/assets/7be91fd4-2cea-481e-b8a4-9c570c393e3c" />
+<img width="360" alt="prod problem 10개 1" src="https://github.com/user-attachments/assets/6640b448-da51-4c5c-b666-99875f082117" />
+
 
 - Tfsec : Terraform 코드 보안 검사 도구로, IaC 보안 취약점을 분석하여 클라우드 환경에서의 보안 위험을 사전에 감지하는 역할
 - 보안 점검 통과율을 초기 58.67%에서 90.10%로 개선하여 +49.18% 향상
@@ -185,24 +190,45 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 #### Jenkins - CI
 <img width="650" alt="수정 CI" src="https://github.com/user-attachments/assets/65e7d27d-0715-4351-a812-dcd7f90030c9" />
 
+<details>
+  <summary>Jenkins 사용 이유</summary>
+  
+  <ul>
+    <li>멀티 플랫폼(Windows, macOS, Linux, Docker, Kubernetes) 등 어떤 환경에서도 동작 가능</li>
+    <li>자체적인 분산 빌드 시스템(Multi-agent 구조) 지원 → 여러 개의 노드 사용으로 병렬 빌드 가능</li>
+    <li>무료 오픈소스(비용 절감), 커스터마이징(매우 유연), 다양한 플러그인(높은 확장성)</li>
+  </ul>
+</details>
 
 <details>
   <summary>Github webhook 연동</summary>
+  
   <ul>
-    <li>보안을 위해서 API Gateway 사용</li>
+    <li>보안을 위해 Jenkins를 Public subnet에 노출하지 않고, API Gateway와 Lambda를 사용</li>
+    <li>Github webhook에 secret 설정 → Lambda에서 webhook secret 검증 후 Jenkins로 전달</li>
+    <li>API Gateway는 RestAPI 구축 후 lambda 프록시 통합을 통해 webhook 응답을 그대로 lambda에게 전달</li>
+    <li>lambda 함수에서 Github webhook이 올바른지 판단 후 Jenkins로 webhook 전달</li>
   </ul>
 </details>
 
 <details>
   <summary>Sonarqube 연동</summary>
   
-  - Sonarqube : 소스 코드 품질 및 보안 분석을 자동으로 수행하는 정적 코드 분석 도구
-  - 코드 버그와 보안 취약점 탐지, 지속적으로 코드 품질 개선 목적
+  <ul>
+    <li>Sonarqube : 소스 코드 품질 및 보안 분석을 자동으로 수행하는 정적 코드 분석 도구</li>
+    <li>코드 버그와 보안 취약점 탐지, 지속적으로 코드 품질 개선 목적</li>
+    <li>sonarqube로 정적 코드 분석으로 코드 품질향상</li>
+    <li>checkout → sonarqube → test → build → image push</li>
+  </ul>
     
 </details>
 
 <details>
   <summary>ECR registry 활용</summary>
+  
+  <ul>
+    <li>EKS에서 배포하기 위해 Jenkins CI 마지막에 Docker Image 형태로 저장 후 ECR에 Push</li>
+  </ul>
 </details>
 
 <br>
@@ -210,18 +236,43 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 #### ArgoCD - CD
 <img width="600" alt="수정 CD" src="https://github.com/user-attachments/assets/1427c206-c6f7-4ffc-a384-5e33ba23d4bc" />
 
+<details>
+  <summary>ArgoCD 사용 이유</summary>
+  
+  <ul>
+    <li>EKS에 배포 & GitOps 방식에 적합</li>
+    <li>Helm을 사용하기에 적합</li>
+    <li>Jenkins CD는 Kubernetes에 친화적이지 않음</li>
+  </ul>
+</details>
 
 <details>
   <summary>Image digest 업데이트 방식</summary>
+  
+  <ul>
+    <li>latest 업데이트 방식을 사용 시 이미지 태그 변경 없이 같은 태그(latest)만 업데이트 된다면, ArgoCD가 이를 감지하지 못함 → digest 업데이트 방식 채택</li>
+  </ul>
 </details>
 
 <details>
   <summary>Canary 무중단 배포 전략</summary>
+  
+  <ul>
+    <li>롤링, 블루/그린, 카나리 3가지의 무중단 배포 전략 중 카나리 선택</li>
+    <li>운영 비용 절감 및 낮은 배포 리스크, 모니터링 및 분석을 위해 Canary 배포 채택</li>
+  </ul>
 </details>
 
 <details>
   <summary>helm chart를 활용한 배포</summary>
+  
+  <ul>
+    <li>GitOps 방식으로 ArgoCD를 관리하기 위해 Helm 사용</li>
+    Git Repository → Helm Chart → ArgoCD → EKS 배포
+    <li>helm 사용으로 개발/배포 환경을 구분하여 관리 가능</li>
+  </ul>
 </details>
+
 
 <br><br>
 
