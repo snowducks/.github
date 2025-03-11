@@ -89,6 +89,15 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 
 <br>
 
+
+
+## 대규모 트래픽(5만) 처리를 위한 고려 사항
+<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/e48566eb-8cc1-47f0-8e8a-7364803f4e11" />
+
+- 500rps를 처리하기 위한 CPU 및 메모리 스펙을 통한 50000rps를 위한 스펙 예측
+- K8s pod 및 node 오토 스케일
+
+
 ## 인프라 구축 & CI/CD
 
 ### Terraform
@@ -212,12 +221,6 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 <br>
 
 ### Jmeter를 활용한 부하 테스트
-대규모 트래픽(5만) 처리를 위한 고려 사항
-<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/e48566eb-8cc1-47f0-8e8a-7364803f4e11" />
-
-- 500rps를 처리하기 위한 CPU 및 메모리 스펙을 통한 50000rps를 위한 스펙 예측
-- K8s pod 및 node 오토 스케일링
-
 
 <details>
   <summary>8000rps 테스트 결과</summary>
