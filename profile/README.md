@@ -99,6 +99,19 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
 - 500rps를 처리하기 위한 CPU 및 메모리 스펙을 통한 50000rps를 위한 스펙 예측
 - K8s pod 및 node 오토 스케일
 
+## 5만이상의 트래픽을 위한 고려사항
+
+<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/a4fc9135-e99f-48b8-91cb-37541746624a" />
+
+- **트래픽 처리 한계 인식**: 제한된 리소스로는 5만이상의 트래픽 처리에는 한계 존재
+- **트래픽 손실 최소화 전략**: 트래픽 손실을 줄이는 방향으로 접근
+- **Kafka 도입**: EKS 내부에 Kafka를 구축하여 요청을 안정적으로 처리하는 시스템 설계
+- **메시지 처리 방식**:
+    - Kafka Broker에 요청 메시지를 순차적으로 저장
+    - Consumer가 메시지를 구독하고 처리하여 트래픽 손실 감소
+
+
+<br/>
 
 ## 인프라 구축 & CI/CD
 
@@ -219,8 +232,6 @@ https://github.com/user-attachments/assets/40eaea19-4099-43f4-bba0-8179e3bda7af
   3. Webhook 트리거 발생 -> API Gateway가 Lambda 호출 -> Lambda가 Jenkins 실행 -> Jenkins가 Terraform 실행하여 인프라 프로비저닝
     
 </details>
-
-<br>
 
 ### Jmeter를 활용한 부하 테스트
 
