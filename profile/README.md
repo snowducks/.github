@@ -62,7 +62,9 @@
     **API Gateway + Lambda** → **Jenkins Webhook** 호출 -> **Jenkins**가 **ECR**에 컨테이너 이미지 푸시 -> **ArgoCD**가 Digest 기반으로 이미지 변경 감지 후 **EKS 배포**
 
 ### 3. DR
-<img width="1000" alt="Image" src="https://github.com/user-attachments/assets/6ca91fad-d116-4110-98ba-350ae077b5f6" />
+<img width="1000" alt="dr 최종수정" src="https://github.com/user-attachments/assets/f2595625-35f2-4cab-ae47-70b16b5dfed6" />
+
+
 
 **재해 복구 모델 환경** <br>
 
